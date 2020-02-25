@@ -64,15 +64,15 @@ namespace SonicRetro.SonLVL.API
 		[IniName("rememberstate")]
 		public bool RememberState;
 		[IniName("defaultsubtype")]
-		[TypeConverter(typeof(ByteHexConverter))]
-		public byte DefaultSubtype;
+		[TypeConverter(typeof(UInt16HexConverter))]
+		public ushort DefaultSubtype;
 		[IniName("debug")]
 		public bool Debug;
 		[IniName("depth")]
 		public int Depth;
 		[IniName("subtypes")]
-		[IniCollection(IniCollectionMode.SingleLine, Format = ",", ValueConverter = typeof(ByteHexConverter))]
-		public byte[] Subtypes;
+		[IniCollection(IniCollectionMode.SingleLine, Format = ",", ValueConverter = typeof(UInt16HexConverter))]
+		public ushort[] Subtypes;
 		[IniCollection(IniCollectionMode.IndexOnly)]
 		public Dictionary<string, string> CustomProperties;
 
@@ -91,12 +91,12 @@ namespace SonicRetro.SonLVL.API
 	public abstract class ObjectDefinition
 	{
 		public abstract void Init(ObjectData data);
-		public abstract ReadOnlyCollection<byte> Subtypes { get; }
-		public abstract string SubtypeName(byte subtype);
-		public abstract Sprite SubtypeImage(byte subtype);
+		public abstract ReadOnlyCollection<ushort> Subtypes { get; }
+		public abstract string SubtypeName(ushort subtype);
+		public abstract Sprite SubtypeImage(ushort subtype);
 		public abstract string Name { get; }
 		public virtual bool RememberState { get { return false; } }
-		public virtual byte DefaultSubtype { get { return 0; } }
+		public virtual ushort DefaultSubtype { get { return 0; } }
 		public abstract Sprite Image { get; }
 		public abstract Sprite GetSprite(ObjectEntry obj);
 		public virtual Rectangle GetBounds(ObjectEntry obj) { return Rectangle.Empty; }
@@ -492,8 +492,8 @@ namespace SonicRetro.SonLVL.API
 		private Sprite[] spr = new Sprite[4];
 		private string name;
 		private bool rememberstate;
-		private byte defsub;
-		private List<byte> subtypes = new List<byte>();
+		private ushort defsub;
+		private List<ushort> subtypes = new List<ushort>();
 		bool debug = false;
 		int depth;
 
@@ -577,17 +577,17 @@ namespace SonicRetro.SonLVL.API
 				subtypes.AddRange(data.Subtypes);
 		}
 
-		public override ReadOnlyCollection<byte> Subtypes { get { return new ReadOnlyCollection<byte>(subtypes); } }
+		public override ReadOnlyCollection<ushort> Subtypes { get { return new ReadOnlyCollection<ushort>(subtypes); } }
 
-		public override string SubtypeName(byte subtype) { return string.Empty; }
+		public override string SubtypeName(ushort subtype) { return string.Empty; }
 
-		public override Sprite SubtypeImage(byte subtype) { return Image; }
+		public override Sprite SubtypeImage(ushort subtype) { return Image; }
 
 		public override string Name { get { return name; } }
 
 		public override bool RememberState { get { return rememberstate; } }
 
-		public override byte DefaultSubtype { get { return defsub; } }
+		public override ushort DefaultSubtype { get { return defsub; } }
 
 		public override Sprite Image { get { return spr[0]; } }
 
@@ -790,7 +790,7 @@ namespace SonicRetro.SonLVL.API
 					if (enums.ContainsKey(property.type))
 					{
 						getMethod = (obj) => (obj.SubType & mask) >> prop_startbit;
-						setMethod = (obj, val) => obj.SubType = (byte)((obj.SubType & ~mask) | (((int)val << prop_startbit) & mask));
+						setMethod = (obj, val) => obj.SubType = (ushort)((obj.SubType & ~mask) | (((int)val << prop_startbit) & mask));
 						custprops.Add(new PropertySpec(property.displayname ?? property.name, typeof(int), "Extended", property.description, null, enums[property.type], getMethod, setMethod));
 						propinf.Add(property.name, new PropertyInfo(typeof(int), enums[property.type], getMethod, setMethod));
 					}
@@ -800,12 +800,12 @@ namespace SonicRetro.SonLVL.API
 						if (type != typeof(bool))
 						{
 							getMethod = (obj) => (obj.SubType & mask) >> prop_startbit;
-							setMethod = (obj, val) => obj.SubType = (byte)((obj.SubType & ~mask) | (((int)val << prop_startbit) & mask));
+							setMethod = (obj, val) => obj.SubType = (ushort)((obj.SubType & ~mask) | (((int)val << prop_startbit) & mask));
 						}
 						else
 						{
 							getMethod = (obj) => ((obj.SubType & mask) >> prop_startbit) != 0;
-							setMethod = (obj, val) => obj.SubType = (byte)((obj.SubType & ~mask) | (((bool)val ? 1 : 0) << prop_startbit));
+							setMethod = (obj, val) => obj.SubType = (ushort)((obj.SubType & ~mask) | (((bool)val ? 1 : 0) << prop_startbit));
 						}
 						custprops.Add(new PropertySpec(property.displayname ?? property.name, type, "Extended", property.description, null, getMethod, setMethod));
 						propinf.Add(property.name, new PropertyInfo(type, getMethod, setMethod));
@@ -989,12 +989,12 @@ namespace SonicRetro.SonLVL.API
 			return new Sprite(sprs);
 		}
 
-		public override ReadOnlyCollection<byte> Subtypes
+		public override ReadOnlyCollection<ushort> Subtypes
 		{
-			get { return new ReadOnlyCollection<byte>(Array.ConvertAll(xmldef.Subtypes.Items, (a) => a.subtype)); }
+			get { return new ReadOnlyCollection<ushort>(Array.ConvertAll(xmldef.Subtypes.Items, (a) => a.subtype)); }
 		}
 
-		public override string SubtypeName(byte subtype)
+		public override string SubtypeName(ushort subtype)
 		{
 			foreach (XMLDef.Subtype item in xmldef.Subtypes.Items)
 				if (item.subtype == subtype)
@@ -1002,7 +1002,7 @@ namespace SonicRetro.SonLVL.API
 			return string.Empty;
 		}
 
-		public override Sprite SubtypeImage(byte subtype)
+		public override Sprite SubtypeImage(ushort subtype)
 		{
 			foreach (XMLDef.Subtype item in xmldef.Subtypes.Items)
 				if (item.subtype == subtype)
@@ -1204,7 +1204,7 @@ namespace SonicRetro.SonLVL.API
 			get { return xmldef.RememberState; }
 		}
 
-		public override byte DefaultSubtype
+		public override ushort DefaultSubtype
 		{
 			get { return xmldef.DefaultSubtypeValue; }
 		}

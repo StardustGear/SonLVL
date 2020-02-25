@@ -49,7 +49,7 @@ namespace SonicRetro.SonLVL.API.SCD
 		[DisplayName("Show in Future")]
 		public virtual bool ShowFuture { get; set; }
 
-		public override byte ID
+		public override ushort ID
 		{
 			get
 			{
@@ -93,7 +93,7 @@ namespace SonicRetro.SonLVL.API.SCD
 			if (YFlip) val |= 0x8000;
 			ret.AddRange(ByteConverter.GetBytes(val));
 			ret.Add((byte)(ID | (RememberState ? 0x80 : 0)));
-			ret.Add(SubType);
+			ret.Add((byte)SubType);
 			byte b = 0;
 			if (ShowPresent) b |= 0x40;
 			if (ShowPast) b |= 0x20;

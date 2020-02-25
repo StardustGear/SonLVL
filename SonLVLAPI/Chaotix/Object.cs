@@ -36,11 +36,11 @@ namespace SonicRetro.SonLVL.API.Chaotix
 	public class ChaotixObjectEntry : ObjectEntry
 	{
 		[Browsable(false)]
-		public override byte SubType
+		public override ushort SubType
 		{
 			get
 			{
-				return (byte)fullSubType;
+				return fullSubType;
 			}
 			set
 			{

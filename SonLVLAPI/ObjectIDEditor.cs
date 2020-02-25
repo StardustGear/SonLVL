@@ -18,8 +18,8 @@ namespace SonicRetro.SonLVL.API
 
 		public event EventHandler ValueChanged = delegate { };
 
-		private byte _value;
-		public byte Value
+		private ushort _value;
+		public ushort Value
 		{
 			get { return _value; }
 			private set
@@ -35,7 +35,7 @@ namespace SonicRetro.SonLVL.API
 			InitializeComponent();
 		}
 
-		public IDControl(byte val, IWindowsFormsEditorService edSvc)
+		public IDControl(ushort val, IWindowsFormsEditorService edSvc)
 		{
 			Value = val;
 			this.edSvc = edSvc;
@@ -79,7 +79,7 @@ namespace SonicRetro.SonLVL.API
 			this.numericUpDown1.Hexadecimal = true;
 			this.numericUpDown1.Location = new System.Drawing.Point(0, 130);
 			this.numericUpDown1.Maximum = new decimal(new int[] {
-			255,
+			65535,
 			0,
 			0,
 			0});
@@ -106,19 +106,20 @@ namespace SonicRetro.SonLVL.API
 			listView1.Items.Clear();
 			imageList1.Images.Clear();
 			if (LevelData.ObjTypes != null)
-				foreach (KeyValuePair<byte, ObjectDefinition> item in LevelData.ObjTypes)
+				foreach (KeyValuePair<ushort, ObjectDefinition> item in LevelData.ObjTypes)
 				{
 					imageList1.Images.Add(item.Value.Image.GetBitmap().ToBitmap(LevelData.BmpPal).Resize(imageList1.ImageSize));
 					listView1.Items.Add(new ListViewItem(item.Value.Name, imageList1.Images.Count - 1) { Tag = item.Key, Selected = item.Key == Value });
 				}
 			listView1.EndUpdate();
 			numericUpDown1.Value = Value;
+			numericUpDown1.Maximum = LevelData.ObjectFormat.MaxID;
 		}
 
 		private void listView1_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			if (listView1.SelectedIndices.Count == 0) return;
-			numericUpDown1.Value = Value = (byte)listView1.SelectedItems[0].Tag;
+			numericUpDown1.Value = Value = (ushort)listView1.SelectedItems[0].Tag;
 		}
 
 		private void listView1_ItemActivate(object sender, EventArgs e)
@@ -134,7 +135,7 @@ namespace SonicRetro.SonLVL.API
 
 		private void numericUpDown1_ValueChanged(object sender, EventArgs e)
 		{
-			Value = (byte)numericUpDown1.Value;
+			Value = (ushort)numericUpDown1.Value;
 		}
 	}
 
@@ -160,7 +161,7 @@ namespace SonicRetro.SonLVL.API
 			if (edSvc != null)
 			{
 				// Display an angle selection control and retrieve the value.
-				IDControl idControl = new IDControl((byte)value, edSvc);
+				IDControl idControl = new IDControl((ushort)value, edSvc);
 				edSvc.DropDownControl(idControl);
 				return idControl.Value;
 			}
@@ -175,7 +176,7 @@ namespace SonicRetro.SonLVL.API
 		public override void PaintValue(PaintValueEventArgs e)
 		{
 			if (e.Value == null) return;
-			byte val = (byte)e.Value;
+			ushort val = (ushort)e.Value;
 			if (LevelData.ObjTypes.ContainsKey(val))
 				e.Graphics.DrawImage(LevelData.ObjTypes[val].Image.GetBitmap().ToBitmap(LevelData.BmpPal).Resize(e.Bounds.Size), e.Bounds);
 			else

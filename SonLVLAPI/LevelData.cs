@@ -45,7 +45,7 @@ namespace SonicRetro.SonLVL.API
 		public static List<ExtraObjEntry> ExtraObjects;
 		public static List<StartPositionEntry> StartPositions;
 		public static Dictionary<string, ObjectData> INIObjDefs;
-		public static Dictionary<byte, ObjectDefinition> ObjTypes;
+		public static Dictionary<ushort, ObjectDefinition> ObjTypes;
 		public static ObjectDefinition unkobj;
 		public static List<StartPositionDefinition> StartPosDefs;
 		public static bool littleendian;
@@ -295,7 +295,7 @@ namespace SonicRetro.SonLVL.API
 					}
 				}
 				INIObjDefs = new Dictionary<string, ObjectData>();
-				ObjTypes = new Dictionary<byte, ObjectDefinition>();
+				ObjTypes = new Dictionary<ushort, ObjectDefinition>();
 				filecache = new Dictionary<string, byte[]>();
 				unkobj = new DefaultObjectDefinition();
 				unkobj.Init(new ObjectData());
@@ -809,6 +809,7 @@ namespace SonicRetro.SonLVL.API
 				ExtraObjects = new List<ExtraObjEntry>();
 				if (File.Exists(Level.ExtraObjects.Filename))
 				{
+					//Log("Loading extra objects from file \"" + Level.ExtraObjects + "\"...");
 					var tmp = File.ReadAllBytes(Level.ExtraObjects.Filename);
 					if (tmp.Length < 10 || ByteConverter.ToInt16(tmp, 2) < 0) return;
 
@@ -1494,7 +1495,7 @@ namespace SonicRetro.SonLVL.API
 
 		private static void InitObjectDefinitions()
 		{
-			List<KeyValuePair<byte, ObjectDefinition>> objdefs = new List<KeyValuePair<byte, ObjectDefinition>>();
+			List<KeyValuePair<ushort, ObjectDefinition>> objdefs = new List<KeyValuePair<ushort, ObjectDefinition>>();
 #if !DEBUG
 			Parallel.ForEach(INIObjDefs, (KeyValuePair<string, ObjectData> group) =>
 #else
@@ -1505,7 +1506,7 @@ namespace SonicRetro.SonLVL.API
 					group.Value.ArtCompression = Game.ObjectArtCompression;
 				if (group.Key == "Ring" && RingFormat is RingLayoutFormat)
 					((RingLayoutFormat)RingFormat).Init(group.Value);
-				else if (byte.TryParse(group.Key, System.Globalization.NumberStyles.HexNumber, System.Globalization.NumberFormatInfo.InvariantInfo, out byte ID))
+				else if (ushort.TryParse(group.Key, System.Globalization.NumberStyles.HexNumber, System.Globalization.NumberFormatInfo.InvariantInfo, out ushort ID))
 				{
 					ObjectDefinition def = null;
 					if (group.Value.CodeFile != null)
@@ -1569,7 +1570,7 @@ namespace SonicRetro.SonLVL.API
 					else
 						def = new DefaultObjectDefinition();
 					lock (objdefs)
-						objdefs.Add(new KeyValuePair<byte, ObjectDefinition>(ID, def));
+						objdefs.Add(new KeyValuePair<ushort, ObjectDefinition>(ID, def));
 					def.Init(group.Value);
 				}
 #if !DEBUG
@@ -2310,7 +2311,7 @@ namespace SonicRetro.SonLVL.API
 			CompChunkBmps[chunk] = tmplow.ToBitmap(BmpPal);
 		}
 
-		public static ObjectDefinition GetObjectDefinition(byte ID)
+		public static ObjectDefinition GetObjectDefinition(ushort ID)
 		{
 			if (ObjTypes != null && ObjTypes.ContainsKey(ID))
 				return ObjTypes[ID];
@@ -2318,7 +2319,7 @@ namespace SonicRetro.SonLVL.API
 				return unkobj;
 		}
 
-		public static ObjectEntry CreateObject(byte ID)
+		public static ObjectEntry CreateObject(ushort ID)
 		{
 			ObjectDefinition def = GetObjectDefinition(ID);
 			ObjectEntry oe = ObjectFormat.CreateObject();

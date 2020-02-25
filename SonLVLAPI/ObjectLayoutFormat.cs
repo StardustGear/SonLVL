@@ -16,7 +16,7 @@ namespace SonicRetro.SonLVL.API
 		/// <summary>
 		/// The default compression used for layout files.
 		/// </summary>
-		public virtual CompressionType DefaultCompression { get { return CompressionType.Uncompressed; } }
+		public virtual CompressionType DefaultCompression => CompressionType.Uncompressed;
 
 		public abstract List<ObjectEntry> ReadLayout(byte[] rawdata, out bool terminator);
 
@@ -68,5 +68,10 @@ namespace SonicRetro.SonLVL.API
 		public void WriteLayout(List<ObjectEntry> objects, string filename, bool terminator) { WriteLayout(objects, DefaultCompression, filename, terminator); }
 
 		public void WriteLayout(List<ObjectEntry> objects, string filename) { WriteLayout(objects, DefaultCompression, filename); }
+
+		// maximum values for ID/subtype (must be a power of 2 minus 1!)
+		public virtual int MaxID => 255;
+
+		public virtual int MaxSubType => 255;
 	}
 }

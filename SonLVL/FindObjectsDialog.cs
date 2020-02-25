@@ -40,8 +40,8 @@ namespace SonicRetro.SonLVL
 			imageList1.Images.Clear();
 			if (LevelData.ObjTypes.ContainsKey(idSelect.Value))
 			{
-				byte value = LevelData.ObjTypes[idSelect.Value].DefaultSubtype;
-				foreach (byte item in LevelData.ObjTypes[idSelect.Value].Subtypes)
+				ushort value = LevelData.ObjTypes[idSelect.Value].DefaultSubtype;
+				foreach (ushort item in LevelData.ObjTypes[idSelect.Value].Subtypes)
 				{
 					imageList1.Images.Add(LevelData.ObjTypes[idSelect.Value].SubtypeImage(item).GetBitmap().ToBitmap(LevelData.BmpPal).Resize(imageList1.ImageSize));
 					subtypeList.Items.Add(new ListViewItem(LevelData.ObjTypes[idSelect.Value].SubtypeName(item), imageList1.Images.Count - 1) { Tag = item, Selected = item == value });
@@ -54,10 +54,10 @@ namespace SonicRetro.SonLVL
 		private void subtypeList_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			if (subtypeList.SelectedIndices.Count > 0)
-				subtypeSelect.Value = (byte)subtypeList.SelectedItems[0].Tag;
+				subtypeSelect.Value = (ushort)subtypeList.SelectedItems[0].Tag;
 		}
 
-		public byte? ID
+		public ushort? ID
 		{
 			get
 			{
@@ -68,12 +68,12 @@ namespace SonicRetro.SonLVL
 			}
 		}
 
-		public byte? SubType
+		public ushort? SubType
 		{
 			get
 			{
 				if (findSubtype.Checked)
-					return (byte)subtypeSelect.Value;
+					return (ushort)subtypeSelect.Value;
 				else
 					return null;
 			}

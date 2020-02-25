@@ -13,13 +13,13 @@ namespace SonicRetro.SonLVL.API
 		internal ImageList imageList1;
 		private IContainer components;
 		internal ListView listView1;
-		private byte id;
+		private ushort id;
 		private NumericUpDown numericUpDown1;
 
-		public byte value { get; private set; }
+		public ushort value { get; private set; }
 		private IWindowsFormsEditorService edSvc;
 
-		public SubTypeControl(byte id, byte val, IWindowsFormsEditorService edSvc)
+		public SubTypeControl(ushort id, ushort val, IWindowsFormsEditorService edSvc)
 		{
 			this.id = id;
 			value = val;
@@ -64,7 +64,7 @@ namespace SonicRetro.SonLVL.API
 			this.numericUpDown1.Hexadecimal = true;
 			this.numericUpDown1.Location = new System.Drawing.Point(0, 130);
 			this.numericUpDown1.Maximum = new decimal(new int[] {
-			255,
+			65535,
 			0,
 			0,
 			0});
@@ -91,19 +91,20 @@ namespace SonicRetro.SonLVL.API
 			listView1.Items.Clear();
 			imageList1.Images.Clear();
 			if (LevelData.ObjTypes.ContainsKey(id))
-				foreach (byte item in LevelData.ObjTypes[id].Subtypes)
+				foreach (ushort item in LevelData.ObjTypes[id].Subtypes)
 				{
 					imageList1.Images.Add(LevelData.ObjTypes[id].SubtypeImage(item).GetBitmap().ToBitmap(LevelData.BmpPal).Resize(imageList1.ImageSize));
 					listView1.Items.Add(new ListViewItem(LevelData.ObjTypes[id].SubtypeName(item), imageList1.Images.Count - 1) { Tag = item, Selected = item == value });
 				}
 			listView1.EndUpdate();
 			numericUpDown1.Value = value;
+			numericUpDown1.Maximum = LevelData.ObjectFormat.MaxSubType;
 		}
 
 		private void listView1_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			if (listView1.SelectedIndices.Count == 0) return;
-			numericUpDown1.Value = value = (byte)listView1.SelectedItems[0].Tag;
+			numericUpDown1.Value = value = (ushort)listView1.SelectedItems[0].Tag;
 		}
 
 		private void listView1_ItemActivate(object sender, EventArgs e)
@@ -113,7 +114,7 @@ namespace SonicRetro.SonLVL.API
 
 		private void numericUpDown1_ValueChanged(object sender, EventArgs e)
 		{
-			value = (byte)numericUpDown1.Value;
+			value = (ushort)numericUpDown1.Value;
 		}
 
 		private void SubTypeControl_KeyDown(object sender, KeyEventArgs e)
@@ -145,15 +146,9 @@ namespace SonicRetro.SonLVL.API
 			if (edSvc != null)
 			{
 				// Display an angle selection control and retrieve the value.
-				byte sub;
-				if (context.Instance is ChaotixObjectEntry)
-					sub = (byte)(ushort)value;
-				else
-					sub = (byte)value;
+				ushort sub = (ushort)value;
 				SubTypeControl SubTypeControl = new SubTypeControl(((ObjectEntry)context.Instance).ID, sub, edSvc);
 				edSvc.DropDownControl(SubTypeControl);
-				if (context.Instance is ChaotixObjectEntry)
-					return (ushort)SubTypeControl.value;
 				return SubTypeControl.value;
 			}
 			return value;
@@ -169,11 +164,7 @@ namespace SonicRetro.SonLVL.API
 			if (!(e.Context.Instance is ObjectEntry)) return;
 			if (e.Value == null) return;
 			if (!LevelData.ObjTypes.ContainsKey(((ObjectEntry)e.Context.Instance).ID)) return;
-			byte sub;
-			if (e.Context.Instance is ChaotixObjectEntry)
-				sub = (byte)(ushort)e.Value;
-			else
-				sub = (byte)e.Value;
+			ushort sub = (ushort)e.Value;
 			e.Graphics.DrawImage(LevelData.ObjTypes[((ObjectEntry)e.Context.Instance).ID].SubtypeImage(sub).GetBitmap().ToBitmap(LevelData.BmpPal).Resize(e.Bounds.Size), e.Bounds);
 		}
 

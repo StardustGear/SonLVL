@@ -35,7 +35,7 @@ namespace SonicRetro.SonLVL.API.S1
 	[Serializable]
 	public class S1ObjectEntry : RememberStateObjectEntry
 	{
-		public override byte ID
+		public override ushort ID
 		{
 			get
 			{
@@ -69,7 +69,7 @@ namespace SonicRetro.SonLVL.API.S1
 			if (YFlip) val |= 0x8000;
 			ret.AddRange(ByteConverter.GetBytes(val));
 			ret.Add((byte)(ID | (RememberState ? 0x80 : 0)));
-			ret.Add(SubType);
+			ret.Add((byte)SubType);
 			return ret.ToArray();
 		}
 

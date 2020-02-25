@@ -63,8 +63,8 @@ namespace SonicRetro.SonLVL.API.S3K
 			if (YFlip) val |= 0x4000;
 			if (LoadAtAnyYPos) val |= 0x8000;
 			ret.AddRange(ByteConverter.GetBytes(val));
-			ret.Add(ID);
-			ret.Add(SubType);
+			ret.Add((byte)ID);
+			ret.Add((byte)SubType);
 			return ret.ToArray();
 		}
 

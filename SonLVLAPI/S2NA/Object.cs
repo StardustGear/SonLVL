@@ -26,7 +26,7 @@ namespace SonicRetro.SonLVL.API.S2NA
 			isLoaded = true;
 		}
 
-		public override byte ID
+		public override ushort ID
 		{
 			get
 			{
@@ -48,7 +48,7 @@ namespace SonicRetro.SonLVL.API.S2NA
 			if (YFlip) val |= 0x8000;
 			ret.AddRange(ByteConverter.GetBytes(val));
 			ret.Add((byte)(ID | (RememberState ? 0x80 : 0)));
-			ret.Add(SubType);
+			ret.Add((byte)SubType);
 			return ret.ToArray();
 		}
 

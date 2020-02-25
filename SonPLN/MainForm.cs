@@ -193,6 +193,7 @@ namespace SonicRetro.SonLVL.SonPLN
 					case EngineVersion.S2:
 					case EngineVersion.S2NA:
 					case EngineVersion.S3K:
+					case EngineVersion.Custom:
 						break;
 					case EngineVersion.SKC:
 						LevelData.littleendian = true;

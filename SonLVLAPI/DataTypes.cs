@@ -965,13 +965,31 @@ namespace SonicRetro.SonLVL.API
 		[DefaultValue(0)]
 		[Description("The ID number of the object.")]
 		[Editor(typeof(IDEditor), typeof(System.Drawing.Design.UITypeEditor))]
-		[TypeConverter(typeof(ByteHexConverter))]
-		public virtual byte ID { get; set; }
+		[TypeConverter(typeof(UInt16HexConverter))]
+		public virtual ushort ID
+		{
+			get => _id; set
+			{
+				if (value > LevelData.ObjectFormat.MaxID)
+					_id = (ushort)LevelData.ObjectFormat.MaxID;
+				else _id = value;
+			}
+		}
+		private ushort _id;
 		[DefaultValue(0)]
 		[Description("The subtype of the object.")]
 		[Editor(typeof(SubTypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
-		[TypeConverter(typeof(ByteHexConverter))]
-		public virtual byte SubType { get; set; }
+		[TypeConverter(typeof(UInt16HexConverter))]
+		public virtual ushort SubType
+		{
+			get => _sub; set
+			{
+				if (value > LevelData.ObjectFormat.MaxSubType)
+					_sub = (ushort)LevelData.ObjectFormat.MaxSubType;
+				else _sub = value;
+			}
+		}
+		private ushort _sub;
 
 		protected bool isLoaded = false;
 		[NonSerialized]

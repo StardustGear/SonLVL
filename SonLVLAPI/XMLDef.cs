@@ -222,7 +222,7 @@ namespace SonicRetro.SonLVL.API.XMLDef
 	public class Subtype : ImageRefList
 	{
 		[XmlIgnore]
-		public byte subtype { get; set; }
+		public ushort subtype { get; set; }
 		[XmlAttribute]
 		public string id { get { return subtype.ToString("X2"); } set { subtype = byte.Parse(value, NumberStyles.HexNumber); } }
 		[XmlAttribute]
