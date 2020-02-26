@@ -440,8 +440,7 @@ namespace SonicRetro.SonLVL.GUI
 					case EngineVersion.SKC:
 						Icon = Properties.Resources.lightningmon;
 						break;
-						// user should specify "sonlvlicon" in INI file
-					case EngineVersion.Custom:
+					case EngineVersion.Custom:		// user should specify icon in "sonlvlicon" in INI file...
 						Icon = Properties.Resources.ringmon1;
 						break;
 					default:
